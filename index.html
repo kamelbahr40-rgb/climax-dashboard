@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Climax Vision - لوحة المهام</title>
+<style>
+:root{
+  --bg:#06111f;--card:#0b1b2e;--card2:#10243a;--line:#1c3a57;
+  --text:#f5f9ff;--muted:#8fa7bf;--blue:#2993ff;--green:#18d39b;
+  --red:#ff4f5e;--shadow:0 12px 30px rgba(0,0,0,.25)
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:linear-gradient(145deg,#04101d,#08192b 55%,#04101d);color:var(--text);font-family:Tahoma,Arial,sans-serif}
+button,input{font:inherit}
+.app{max-width:1250px;margin:auto;padding:14px 14px 90px}
+header{display:flex;justify-content:space-between;align-items:center;padding:15px 4px 18px}
+.brand{display:flex;align-items:center;gap:11px}
+.logo{width:45px;height:45px;border-radius:50%;display:grid;place-items:center;border:2px solid #24537b;background:#0b2036;font-weight:900;color:#fff;box-shadow:0 0 22px rgba(41,147,255,.18)}
+.brand h1{font-size:19px;margin:0 0 3px}
+.brand p{margin:0;color:var(--muted);font-size:10px}
+.menu{width:42px;height:42px;border:1px solid var(--line);background:var(--card);color:#fff;border-radius:12px;font-size:22px}
+.hero{background:linear-gradient(135deg,#0b2340,#0a1728);border:1px solid var(--line);border-radius:22px;padding:17px;box-shadow:var(--shadow);margin-bottom:12px}
+.hero-row{display:flex;justify-content:space-between;gap:15px;align-items:center}
+.hero-title{font-size:13px;color:var(--muted);margin-bottom:5px}
+.hero-number{font-size:31px;font-weight:900}
+.hero-sub{font-size:10px;color:var(--muted)}
+.progress-box{min-width:45%;text-align:left}
+.progress-ring{width:112px;height:112px;margin:auto;position:relative}
+.progress-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.progress-ring circle{fill:none;stroke-width:9}
+.ring-bg{stroke:#18324d}.ring-val{stroke:var(--green);stroke-linecap:round;stroke-dasharray:251;stroke-dashoffset:167}
+.ring-text{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.ring-text strong{font-size:21px}.ring-text span{font-size:8px;color:var(--muted)}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:12px}
+.metric{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:13px;position:relative;overflow:hidden}
+.metric:before{content:"";position:absolute;right:0;top:0;bottom:0;width:3px;background:var(--blue)}
+.metric.green:before{background:var(--green)}.metric.red:before{background:var(--red)}
+.metric-label{color:var(--muted);font-size:10px}.metric-value{font-size:23px;font-weight:900;margin-top:6px}.metric-pct{font-size:9px;color:var(--muted);font-weight:400}
+.panel{background:rgba(11,27,46,.9);border:1px solid var(--line);border-radius:19px;padding:15px;margin-bottom:12px;box-shadow:var(--shadow)}
+.panel-title{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:13px;margin-bottom:12px}
+.chart-area{display:grid;grid-template-columns:170px 1fr;align-items:center;gap:15px}
+canvas{width:170px;height:170px}
+.legend{display:grid;gap:12px}.legend-row{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:10px}.legend-left{display:flex;align-items:center;gap:7px}.dot{width:10px;height:10px;border-radius:50%}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin:16px 0 10px}.section-head h2{font-size:15px;margin:0}.show-all{color:var(--blue);font-size:10px}
+.filters{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+.filter{border:1px solid var(--line);background:#0b1a2c;color:var(--muted);border-radius:10px;padding:8px 4px;font-size:9px;cursor:pointer}
+.filter.active{background:var(--blue);color:white;border-color:var(--blue)}
+.search{display:flex;gap:7px;margin-bottom:11px}
+.search input{width:100%;background:#08182a;border:1px solid var(--line);border-radius:11px;color:#fff;padding:10px 12px;outline:none;font-size:10px}
+.search input:focus{border-color:var(--blue)}
+.task-list{display:grid;gap:8px}
+.task{background:linear-gradient(120deg,#0a1c30,#0b1728);border:1px solid var(--line);border-radius:15px;padding:11px;display:grid;grid-template-columns:36px 1fr 62px;gap:10px;align-items:center;position:relative;overflow:hidden}
+.task:before{content:"";position:absolute;right:0;top:0;bottom:0;width:4px;background:var(--red)}
+.task.completed:before{background:var(--green)}.task.progress:before{background:var(--blue)}
+.task-icon{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(255,79,94,.12);color:var(--red);border:1px solid rgba(255,79,94,.25);font-weight:900}
+.task.completed .task-icon{background:rgba(24,211,155,.12);color:var(--green);border-color:rgba(24,211,155,.25)}
+.task.progress .task-icon{background:rgba(41,147,255,.12);color:var(--blue);border-color:rgba(41,147,255,.25)}
+.task-title{font-size:11px;font-weight:800;line-height:1.55}.task-meta{display:flex;gap:7px;align-items:center;margin-top:5px;flex-wrap:wrap}
+.badge{font-size:8px;padding:4px 7px;border-radius:999px;font-weight:800}
+.badge.green{background:rgba(24,211,155,.12);color:var(--green)}.badge.red{background:rgba(255,79,94,.12);color:#ff6875}.badge.blue{background:rgba(41,147,255,.12);color:#5cacff}
+.task-no{font-size:9px;color:var(--muted);background:#11263d;border-radius:7px;padding:4px 6px}
+.task-progress{text-align:center}.circle{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;margin:auto;background:conic-gradient(var(--green) 0deg,var(--green) 360deg,#18324d 360deg);position:relative}
+.circle:after{content:"";position:absolute;inset:5px;border-radius:50%;background:#0a1b2e}.circle span{position:relative;z-index:1;font-size:9px;font-weight:900}
+.task.pending .circle{background:conic-gradient(#334b64 0deg,#334b64 2deg,#18324d 2deg 360deg)}.task.half .circle{background:conic-gradient(var(--blue) 0deg 180deg,#18324d 180deg 360deg)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(5,17,30,.94);border-top:1px solid var(--line);backdrop-filter:blur(12px);display:flex;justify-content:center;z-index:10}
+.nav-inner{width:min(600px,100%);display:grid;grid-template-columns:repeat(4,1fr)}
+.nav{border:0;background:none;color:var(--muted);padding:10px 4px 9px;font-size:8px}.nav span{display:block;font-size:17px;margin-bottom:3px}.nav.active{color:var(--blue)}
+.empty{display:none;text-align:center;color:var(--muted);padding:25px;font-size:11px}
+@media(min-width:850px){
+ .app{padding-bottom:30px}.hero{display:grid;grid-template-columns:1fr 220px;align-items:center}.progress-box{min-width:0}
+ .content-grid{display:grid;grid-template-columns:1fr 1.35fr;gap:12px;align-items:start}.panel{margin-bottom:0}
+ .task-list{grid-template-columns:repeat(2,1fr)}.bottom-nav{display:none}
+}
+@media(max-width:600px){
+ .app{padding:8px 8px 78px}header{padding:10px 3px 13px}.brand h1{font-size:17px}.hero{padding:14px}.hero-row{align-items:center}.hero-number{font-size:27px}.progress-ring{width:92px;height:92px}
+ .metrics{grid-template-columns:repeat(2,1fr);gap:7px}.metric{padding:10px;border-radius:14px}.metric-value{font-size:20px}
+ .content-grid{display:block}.panel{padding:12px;border-radius:16px}.chart-area{grid-template-columns:125px 1fr;gap:10px}canvas{width:125px;height:125px}
+ .task{grid-template-columns:34px 1fr 55px}.task-title{font-size:10px}.task-progress .circle{width:44px;height:44px}
+}
+@media(max-width:370px){.chart-area{grid-template-columns:1fr;text-align:center}.legend{grid-template-columns:repeat(3,1fr);gap:5px}.legend-row{display:block}.legend-left{justify-content:center}.filters{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand">
+    <div class="logo">CV</div>
+    <div><h1>Climax Vision</h1><p>لوحة متابعة المهام والعمليات</p></div>
+  </div>
+  <button class="menu">☰</button>
+</header>
+
+<section class="hero">
+  <div class="hero-row">
+    <div>
+      <div class="hero-title">نسبة الإنجاز الكلية</div>
+      <div class="hero-number">33.3%</div>
+      <div class="hero-sub">7 مهام مكتملة من إجمالي 21 مهمة</div>
+    </div>
+    <div class="progress-box">
+      <div class="progress-ring">
+        <svg viewBox="0 0 100 100">
+          <circle class="ring-bg" cx="50" cy="50" r="40"></circle>
+          <circle class="ring-val" cx="50" cy="50" r="40"></circle>
+        </svg>
+        <div class="ring-text"><strong>33.3%</strong><span>إنجاز</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="metrics">
+  <div class="metric"><div class="metric-label">إجمالي المهام</div><div class="metric-value">21 <span class="metric-pct">(100%)</span></div></div>
+  <div class="metric green"><div class="metric-label">مكتملة</div><div class="metric-value">7 <span class="metric-pct">(33.3%)</span></div></div>
+  <div class="metric"><div class="metric-label">جاري التنفيذ</div><div class="metric-value">1 <span class="metric-pct">(4.8%)</span></div></div>
+  <div class="metric red"><div class="metric-label">قيد التنفيذ</div><div class="metric-value">13 <span class="metric-pct">(61.9%)</span></div></div>
+</section>
+
+<div class="content-grid">
+<section class="panel">
+  <div class="panel-title"><span>توزيع حالات المهام</span><span>◫</span></div>
+  <div class="chart-area">
+    <canvas id="chart"></canvas>
+    <div class="legend">
+      <div class="legend-row"><span class="legend-left"><i class="dot" style="background:#ff4f5e"></i>قيد التنفيذ</span><b>13 (61.9%)</b></div>
+      <div class="legend-row"><span class="legend-left"><i class="dot" style="background:#18d39b"></i>مكتملة</span><b>7 (33.3%)</b></div>
+      <div class="legend-row"><span class="legend-left"><i class="dot" style="background:#2993ff"></i>جاري التنفيذ</span><b>1 (4.8%)</b></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="section-head"><h2>المهام</h2><span class="show-all">21 مهمة</span></div>
+  <div class="filters">
+    <button class="filter active" data-filter="all">الكل (21)</button>
+    <button class="filter" data-filter="مكتمل">مكتملة (7)</button>
+    <button class="filter" data-filter="جاري التنفيذ">جاري التنفيذ (1)</button>
+    <button class="filter" data-filter="قيد التنفيذ">قيد التنفيذ (13)</button>
+  </div>
+  <div class="search"><input id="search" placeholder="ابحث عن مهمة..."></div>
+  <div id="taskList" class="task-list"></div>
+  <div id="empty" class="empty">لا توجد مهام مطابقة للبحث أو الفلتر.</div>
+</section>
+</div>
+</div>
+
+<nav class="bottom-nav">
+ <div class="nav-inner">
+  <button class="nav active"><span>⌂</span>الرئيسية</button>
+  <button class="nav" onclick="document.querySelector('.panel:last-child').scrollIntoView({behavior:'smooth'})"><span>☷</span>المهام</button>
+  <button class="nav"><span>▥</span>التقارير</button>
+  <button class="nav"><span>⚙</span>الإعدادات</button>
+ </div>
+</nav>
+
+<script>
+const tasks=[
+["01","النظافة","مكتمل",100,"completed"],
+["02","ترتيب وعرض المنتجات (Display)","مكتمل",100,"completed"],
+["03","إعادة ترتيب طفايات الحريق وتوزيعها بالوكالة","مكتمل",100,"completed"],
+["04","ترشيد الكهرباء (طلب حساسات كهرباء)","قيد التنفيذ",0,"pending"],
+["05","إزالة مواد النظافة من أسفل الدرج","مكتمل",100,"completed"],
+["06","ستائر الواجهة","قيد التنفيذ",0,"pending"],
+["07","تنظيم المستودع بشكل دوري","مكتمل",100,"completed"],
+["08","ترتيب منطقة الكاشير الخاص بالمصمم","قيد التنفيذ",0,"pending"],
+["09","ملاحظة عدم وجود شخص مستلم للأصول الثابتة","قيد التنفيذ",0,"pending"],
+["10","ملاحظة عدم وجود أكياس تعطى للعميل عند الشراء","قيد التنفيذ",0,"pending"],
+["11","جرد المستودع والمخزون وإدخاله على النظام","قيد التنفيذ",0,"pending"],
+["12","صيانات متفرقة بالوكالة","مكتمل",100,"completed"],
+["13","تعليق الطفايات بالجدار","قيد التنفيذ",0,"pending"],
+["14","تسعير خدمات المنتجات داخل منطقة العرض Price list","قيد التنفيذ",0,"pending"],
+["15","طلب طباعة ورقة لتعليمات استخدام طفايات الحريق","قيد التنفيذ",0,"pending"],
+["16","تقرير P&L مع break even","جاري التنفيذ",50,"progress"],
+["17","عمل دورة مستندية لجميع الفواتير","مكتمل",100,"completed"],
+["18","كارت الوكالة مع الكارت الشخصي","قيد التنفيذ",0,"pending"],
+["19","استيكر لوجو السيارة للوكالة","قيد التنفيذ",0,"pending"],
+["20","طلب تايمر للوجو الخارجي","قيد التنفيذ",0,"pending"],
+["21","طلب ID للموظفين (المصمم + مدير التشغيل)","قيد التنفيذ",0,"pending"]
+];
+
+const list=document.getElementById("taskList");
+const search=document.getElementById("search");
+const empty=document.getElementById("empty");
+let activeFilter="all";
+
+function badgeClass(status){
+ if(status==="مكتمل") return "green";
+ if(status==="جاري التنفيذ") return "blue";
+ return "red";
+}
+function icon(status){return status==="مكتمل"?"✓":status==="جاري التنفيذ"?"▶":"◷"}
+
+function render(){
+ const q=search.value.trim().toLowerCase();
+ list.innerHTML="";
+ let count=0;
+ tasks.forEach(t=>{
+   const matchFilter=activeFilter==="all"||t[2]===activeFilter;
+   const matchSearch=!q||t[1].toLowerCase().includes(q);
+   if(!matchFilter||!matchSearch)return;
+   count++;
+   const el=document.createElement("div");
+   el.className="task "+t[4];
+   el.innerHTML=`
+    <div class="task-icon">${icon(t[2])}</div>
+    <div>
+      <div class="task-title">${t[1]}</div>
+      <div class="task-meta">
+        <span class="task-no">${t[0]}</span>
+        <span class="badge ${badgeClass(t[2])}">${t[2]}</span>
+      </div>
+    </div>
+    <div class="task-progress">
+      <div class="circle"><span>${t[3]}%</span></div>
+    </div>`;
+   list.appendChild(el);
+ });
+ empty.style.display=count?"none":"block";
+}
+
+document.querySelectorAll(".filter").forEach(btn=>{
+ btn.addEventListener("click",()=>{
+   document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));
+   btn.classList.add("active");
+   activeFilter=btn.dataset.filter;
+   render();
+ });
+});
+search.addEventListener("input",render);
+render();
+
+const canvas=document.getElementById("chart");
+function drawChart(){
+ const dpr=devicePixelRatio||1, rect=canvas.getBoundingClientRect(), s=rect.width;
+ canvas.width=s*dpr;canvas.height=s*dpr;
+ const c=canvas.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);
+ const cx=s/2,cy=s/2,r=s*.42,inner=r*.66,total=21;
+ let a=-Math.PI/2;
+ [[13,"#ff4f5e"],[7,"#18d39b"],[1,"#2993ff"]].forEach(([v,color])=>{
+   const n=a+v/total*Math.PI*2;c.beginPath();c.moveTo(cx,cy);c.arc(cx,cy,r,a,n);c.closePath();c.fillStyle=color;c.fill();a=n;
+ });
+ c.globalCompositeOperation="destination-out";c.beginPath();c.arc(cx,cy,inner,0,Math.PI*2);c.fill();c.globalCompositeOperation="source-over";
+ c.fillStyle="#fff";c.textAlign="center";c.textBaseline="middle";c.font="900 20px Arial";c.fillText("21",cx,cy-5);
+ c.fillStyle="#8fa7bf";c.font="9px Arial";c.fillText("مهمة",cx,cy+15);
+}
+drawChart();addEventListener("resize",drawChart);
+</script>
+</body>
+</html>
